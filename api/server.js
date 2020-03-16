@@ -30,10 +30,52 @@ server.get('/api/accounts/:id', (req, res) => {
     .catch(error => res.status(500).json({ message: 'There was an error' }));
 });
 
-server.post('/', (req, res) => {});
+//working
+server.post('/api/accounts', (req, res) => {
+  db('accounts')
+    .insert(req.body, 'id')
+    .then(ids => {
+      res.status(201).json({ results: ids });
+    })
+    .catch(error => {
+      res.status(500).json({ message: 'There was an error' });
+    });
+});
 
-server.put('/:id', (req, res) => {});
+//working
+server.put('/api/accounts/:id', (req, res) => {
+  const changes = req.body;
 
-server.delete('/:id', (req, res) => {});
+  db('accounts')
+    .where({ id: req.params.id })
+    .update(changes)
+    .then(count => {
+      if (count > 0) {
+        res.status(200).json({ message: 'record updated successfully' });
+      } else {
+        res.status(404).json({ message: 'Account not found' });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: 'There was an error' });
+    });
+});
+
+//working
+server.delete('/api/accounts/:id', (req, res) => {
+  db('accounts')
+    .where({ id: req.params.id })
+    .del()
+    .then(count => {
+      if (count > 0) {
+        res.status(200).json({ message: 'record deleted successfully' });
+      } else {
+        res.status(404).json({ message: 'Account not found' });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: 'There was an error' });
+    });
+});
 
 module.exports = server;
